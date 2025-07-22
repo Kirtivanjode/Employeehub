@@ -1,0 +1,113 @@
+<div class="leave-management">
+  <div class="page-header">
+    <h1>Leave Management</h1>
+    <button *ngIf="!isAdmin" class="btn btn-primary" (click)="showApplyForm = !showApplyForm">
+      {{showApplyForm ? 'Cancel' : 'Apply for Leave'}}
+    </button>
+  </div>
+
+  <!-- Leave Balance (Employee View) -->
+  <div *ngIf="!isAdmin && leaveBalance" class="leave-balance-card">
+    <h2>Your Leave Balance</h2>
+    <div class="balance-grid">
+      <div class="balance-item">
+        <div class="balance-number">{{leaveBalance.sickLeave}}</div>
+        <div class="balance-label">Sick Leave</div>
+      </div>
+      <div class="balance-item">
+        <div class="balance-number">{{leaveBalance.vacation}}</div>
+        <div class="balance-label">Vacation</div>
+      </div>
+      <div class="balance-item">
+        <div class="balance-number">{{leaveBalance.personal}}</div>
+        <div class="balance-label">Personal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apply Leave Form (Employee View) -->
+  <div *ngIf="!isAdmin && showApplyForm" class="apply-leave-form">
+    <h2>Apply for Leave</h2>
+    <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="leaveType">Leave Type *</label>
+          <select id="leaveType" formControlName="leaveType" class="form-input">
+            <option value="">Select Leave Type</option>
+            <option value="sick">Sick Leave</option>
+            <option value="vacation">Vacation</option>
+            <option value="personal">Personal Leave</option>
+            <option value="emergency">Emergency</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="startDate">Start Date *</label>
+          <input type="date" id="startDate" formControlName="startDate" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="endDate">End Date *</label>
+          <input type="date" id="endDate" formControlName="endDate" class="form-input">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="reason">Reason *</label>
+          <textarea id="reason" formControlName="reason" class="form-input" rows="3" placeholder="Please provide reason for leave"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="showApplyForm = false">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="leaveForm.invalid">Apply Leave</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Leave Requests List -->
+  <div class="leave-requests">
+    <h2>{{isAdmin ? 'All Leave Requests' : 'Your Leave Requests'}}</h2>
+    
+    <div class="requests-grid">
+      <div *ngFor="let request of filteredRequests" class="request-card">
+        <div class="request-header">
+          <div class="employee-info">
+            <h3>{{request.employeeName}}</h3>
+            <span class="leave-type">{{request.leaveType | titlecase}} Leave</span>
+          </div>
+          <span class="status-badge" [class]="request.status">{{request.status | titlecase}}</span>
+        </div>
+
+        <div class="request-details">
+          <div class="detail-row">
+            <span class="label">Duration:</span>
+            <span>{{request.startDate | date:'mediumDate'}} - {{request.endDate | date:'mediumDate'}}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Applied:</span>
+            <span>{{request.appliedDate | date:'mediumDate'}}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Reason:</span>
+            <span>{{request.reason}}</span>
+          </div>
+          <div *ngIf="request.comments" class="detail-row">
+            <span class="label">Comments:</span>
+            <span>{{request.comments}}</span>
+          </div>
+        </div>
+
+        <div *ngIf="isAdmin && request.status === 'pending'" class="request-actions">
+          <button class="btn btn-success" (click)="approveLeave(request.id)">Approve</button>
+          <button class="btn btn-danger" (click)="rejectLeave(request.id)">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredRequests.length === 0" class="no-requests">
+      <div class="no-requests-icon">📋</div>
+      <h3>No leave requests found</h3>
+      <p>{{isAdmin ? 'No leave requests have been submitted yet.' : 'You haven\'t applied for any leave yet.'}}</p>
+    </div>
+  </div>
+</div>

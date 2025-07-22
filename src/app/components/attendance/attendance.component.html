@@ -1,0 +1,112 @@
+<div class="attendance">
+  <div class="page-header">
+    <h1>Attendance Management</h1>
+    <div *ngIf="!isAdmin" class="check-buttons">
+      <button class="btn btn-success" (click)="checkIn()" [disabled]="hasCheckedIn">
+        {{hasCheckedIn ? 'Checked In' : 'Check In'}}
+      </button>
+      <button class="btn btn-warning" (click)="checkOut()" [disabled]="!hasCheckedIn || hasCheckedOut">
+        {{hasCheckedOut ? 'Checked Out' : 'Check Out'}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Attendance Stats (Admin View) -->
+  <div *ngIf="isAdmin" class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <h3>{{attendanceStats.totalEmployees}}</h3>
+        <p>Total Employees</p>
+      </div>
+    </div>
+
+    <div class="stat-card success">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{attendanceStats.presentToday}}</h3>
+        <p>Present Today</p>
+      </div>
+    </div>
+
+    <div class="stat-card danger">
+      <div class="stat-icon">❌</div>
+      <div class="stat-content">
+        <h3>{{attendanceStats.absentToday}}</h3>
+        <p>Absent Today</p>
+      </div>
+    </div>
+
+    <div class="stat-card warning">
+      <div class="stat-icon">⏰</div>
+      <div class="stat-content">
+        <h3>{{attendanceStats.lateToday}}</h3>
+        <p>Late Today</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Attendance -->
+  <div class="attendance-section">
+    <h2>{{isAdmin ? 'Today\'s Attendance' : 'Your Attendance Today'}}</h2>
+    
+    <div class="attendance-grid">
+      <div *ngFor="let record of displayedRecords" class="attendance-card">
+        <div class="employee-info">
+          <h3>{{record.employeeName}}</h3>
+          <span class="status-badge" [class]="record.status">{{record.status | titlecase}}</span>
+        </div>
+
+        <div class="time-info">
+          <div class="time-row" *ngIf="record.checkInTime">
+            <span class="time-label">Check In:</span>
+            <span class="time-value">{{record.checkInTime}}</span>
+          </div>
+          <div class="time-row" *ngIf="record.checkOutTime">
+            <span class="time-label">Check Out:</span>
+            <span class="time-value">{{record.checkOutTime}}</span>
+          </div>
+          <div class="time-row" *ngIf="record.workingHours">
+            <span class="time-label">Working Hours:</span>
+            <span class="time-value">{{record.workingHours | number:'1.1-1'}}h</span>
+          </div>
+        </div>
+
+        <div class="attendance-date">
+          {{record.date | date:'fullDate'}}
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="displayedRecords.length === 0" class="no-attendance">
+      <div class="no-attendance-icon">📅</div>
+      <h3>No attendance records</h3>
+      <p>{{isAdmin ? 'No attendance records found for today.' : 'You haven\'t checked in today yet.'}}</p>
+    </div>
+  </div>
+
+  <!-- Attendance History (Employee View) -->
+  <div *ngIf="!isAdmin" class="attendance-history">
+    <h2>Your Attendance History</h2>
+    
+    <div class="history-table">
+      <div class="table-header">
+        <div class="header-cell">Date</div>
+        <div class="header-cell">Check In</div>
+        <div class="header-cell">Check Out</div>
+        <div class="header-cell">Hours</div>
+        <div class="header-cell">Status</div>
+      </div>
+
+      <div *ngFor="let record of employeeHistory" class="table-row">
+        <div class="table-cell">{{record.date | date:'mediumDate'}}</div>
+        <div class="table-cell">{{record.checkInTime || '-'}}</div>
+        <div class="table-cell">{{record.checkOutTime || '-'}}</div>
+        <div class="table-cell">{{record.workingHours ? (record.workingHours | number:'1.1-1') + 'h' : '-'}}</div>
+        <div class="table-cell">
+          <span class="status-badge" [class]="record.status">{{record.status | titlecase}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

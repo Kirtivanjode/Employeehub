@@ -1,0 +1,8 @@
+.app {
+  min-height: 100vh;
+  background: #f7fafc;
+}
+
+.main-content {
+  min-height: calc(100vh - 80px);
+}

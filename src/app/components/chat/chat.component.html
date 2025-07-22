@@ -1,0 +1,82 @@
+<div class="chat-container">
+  <!-- Chat Sidebar -->
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <h2>Messages</h2>
+      <button class="btn btn-primary btn-sm" (click)="showEmployeeList = !showEmployeeList">
+        New Chat
+      </button>
+    </div>
+
+    <!-- Employee List for New Chat -->
+    <div *ngIf="showEmployeeList" class="employee-list">
+      <h3>Start New Chat</h3>
+      <div *ngFor="let employee of employees" class="employee-item" (click)="startPrivateChat(employee.id)">
+        <img [src]="employee.avatar" [alt]="employee.firstName" class="employee-avatar">
+        <span>{{employee.firstName}} {{employee.lastName}}</span>
+      </div>
+    </div>
+
+    <!-- Chat Rooms List -->
+    <div class="chat-rooms">
+      <div *ngFor="let room of chatRooms" 
+           class="chat-room-item" 
+           [class.active]="selectedRoom?.id === room.id"
+           (click)="selectRoom(room)">
+        <div class="room-info">
+          <div class="room-name">{{room.name}}</div>
+          <div *ngIf="room.lastMessage" class="last-message">
+            {{room.lastMessage.message | slice:0:30}}{{room.lastMessage.message.length > 30 ? '...' : ''}}
+          </div>
+        </div>
+        <div *ngIf="room.unreadCount > 0" class="unread-badge">{{room.unreadCount}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Main Area -->
+  <div class="chat-main">
+    <div *ngIf="selectedRoom" class="chat-content">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <h3>{{selectedRoom.name}}</h3>
+        <span class="participant-count" *ngIf="selectedRoom.isGroup">
+          {{selectedRoom.participants.length}} participants
+        </span>
+      </div>
+
+      <!-- Messages Area -->
+      <div class="messages-container" #messagesContainer>
+        <div *ngFor="let message of roomMessages" 
+             class="message" 
+             [class.own-message]="message.senderId === currentUserId">
+          <div class="message-header">
+            <span class="sender-name">{{message.senderName}}</span>
+            <span class="message-time">{{message.timestamp | date:'short'}}</span>
+          </div>
+          <div class="message-content">{{message.message}}</div>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input-container">
+        <input 
+          type="text" 
+          [(ngModel)]="newMessage" 
+          (keyup.enter)="sendMessage()"
+          placeholder="Type a message..."
+          class="message-input"
+        >
+        <button class="btn btn-primary send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+          Send
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!selectedRoom" class="no-chat-selected">
+      <div class="no-chat-icon">💬</div>
+      <h3>Select a chat to start messaging</h3>
+      <p>Choose from your existing conversations or start a new one</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<nav class="navbar" *ngIf="isAuthenticated">
+  <div class="nav-container">
+    <div class="nav-brand" (click)="goTo('/')">
+      <div class="brand-icon">👥</div>
+      <span>EmployeeHub</span>
+    </div>
+
+    <div class="nav-links">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link"
+      >
+        Dashboard
+      </a>
+      <a routerLink="/employees" routerLinkActive="active" class="nav-link">
+        Employees
+      </a>
+      <a routerLink="/leave" routerLinkActive="active" class="nav-link">
+        Leave
+      </a>
+      <a routerLink="/attendance" routerLinkActive="active" class="nav-link">
+        Attendance
+      </a>
+      <a routerLink="/chat" routerLinkActive="active" class="nav-link">
+        Chat
+      </a>
+      <a *ngIf="isAdmin" routerLink="/employee/new" class="nav-link btn-add">
+        + Add Employee
+      </a>
+      <button class="nav-link logout-btn" (click)="logout()">Logout</button>
+    </div>
+
+    <div class="nav-mobile-toggle" (click)="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="nav-mobile" [class.active]="isMobileMenuOpen">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-link"
+      (click)="closeMobileMenu()"
+    >
+      Dashboard
+    </a>
+    <a
+      routerLink="/employees"
+      routerLinkActive="active"
+      class="nav-link"
+      (click)="closeMobileMenu()"
+    >
+      Employees
+    </a>
+    <a
+      routerLink="/leave"
+      routerLinkActive="active"
+      class="nav-link"
+      (click)="closeMobileMenu()"
+    >
+      Leave
+    </a>
+    <a
+      routerLink="/attendance"
+      routerLinkActive="active"
+      class="nav-link"
+      (click)="closeMobileMenu()"
+    >
+      Attendance
+    </a>
+    <a
+      routerLink="/chat"
+      routerLinkActive="active"
+      class="nav-link"
+      (click)="closeMobileMenu()"
+    >
+      Chat
+    </a>
+    <a
+      *ngIf="isAdmin"
+      routerLink="/employee/new"
+      class="nav-link btn-add"
+      (click)="closeMobileMenu()"
+    >
+      + Add Employee
+    </a>
+    <button class="nav-link logout-btn" (click)="logout(); closeMobileMenu()">
+      Logout
+    </button>
+  </div>
+</nav>

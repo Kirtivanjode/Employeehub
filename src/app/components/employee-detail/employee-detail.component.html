@@ -1,0 +1,85 @@
+<div class="employee-detail" *ngIf="employee">
+  <div class="detail-header">
+    <button class="btn btn-secondary" (click)="goBack()">← Back</button>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="editEmployee()">Edit</button>
+      <button class="btn btn-danger" (click)="deleteEmployee()">Delete</button>
+    </div>
+  </div>
+
+  <div class="employee-profile">
+    <div class="profile-header">
+      <img [src]="employee.avatar" [alt]="employee.firstName + ' ' + employee.lastName" class="profile-avatar">
+      <div class="profile-info">
+        <h1>{{employee.firstName}} {{employee.lastName}}</h1>
+        <p class="position">{{employee.position}}</p>
+        <p class="department">{{employee.department}}</p>
+        <span class="status" [class]="employee.status">{{employee.status}}</span>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <div class="detail-section">
+        <h3>Contact Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Email</label>
+            <p>{{employee.email}}</p>
+          </div>
+          <div class="detail-item">
+            <label>Phone</label>
+            <p>{{employee.phone || 'Not provided'}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>Employment Details</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Position</label>
+            <p>{{employee.position}}</p>
+          </div>
+          <div class="detail-item">
+            <label>Department</label>
+            <p>{{employee.department}}</p>
+          </div>
+          <div class="detail-item">
+            <label>Salary</label>
+            <p>{{employee.salary | currency}}</p>
+          </div>
+          <div class="detail-item">
+            <label>Start Date</label>
+            <p>{{employee.startDate | date:'fullDate'}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>Additional Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Employee ID</label>
+            <p>#{{employee.id}}</p>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <p>
+              <span class="status-badge" [class]="employee.status">{{employee.status}}</span>
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>Years of Service</label>
+            <p>{{getYearsOfService()}} years</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!employee" class="not-found">
+  <h2>Employee not found</h2>
+  <p>The employee you're looking for doesn't exist.</p>
+  <button class="btn btn-primary" (click)="goBack()">Go Back</button>
+</div>
