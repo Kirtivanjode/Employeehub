@@ -395,54 +395,78 @@
   }
 }
 
-/* Larger Screens (Desktops & Wide Monitors > 1280px) */
+/* Larger Screens (Desktops > 1280px) */
 @media (min-width: 1280px) {
   .chat-container {
     max-width: 1600px;
-    margin: 0 auto; /* center content */
+    margin: 0 auto; /* center layout */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .chat-sidebar {
-    width: 350px;
+    width: 360px;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .chat-main {
+    background: #f9fbfd; /* subtle split background */
+  }
+
+  .chat-header {
+    padding: 2rem;
+    font-size: 1.2rem;
   }
 
   .chat-header h3 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
 
   .participant-count {
     font-size: 1rem;
   }
 
+  .messages-container {
+    padding: 2rem 3rem;
+    max-width: 1000px; /* prevents super-wide messages */
+    margin: 0 auto;
+  }
+
   .message {
-    max-width: 60%; /* keep messages narrower */
+    max-width: 60%;
     font-size: 1rem;
+  }
+
+  .message-input-container {
+    padding: 1.5rem 2rem;
   }
 
   .message-input {
     font-size: 1.1rem;
-    padding: 1rem;
+    padding: 1rem 1.2rem;
     width: 80%;
   }
 
   .btn {
     font-size: 1rem;
-    padding: 0.9rem 1.2rem;
+    padding: 0.9rem 1.4rem;
   }
 }
 
-/* Ultra-Wide Screens (> 1600px) */
+/* Ultra-Wide Monitors (> 1600px) */
 @media (min-width: 1600px) {
   .chat-container {
     max-width: 1800px;
   }
 
   .chat-sidebar {
-    width: 400px;
+    width: 420px;
   }
 
   .messages-container {
-    padding: 2rem 4rem; /* more breathing space */
+    padding: 3rem 5rem;
   }
 
   .message {
@@ -451,6 +475,6 @@
   }
 
   .chat-header h3 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 }
