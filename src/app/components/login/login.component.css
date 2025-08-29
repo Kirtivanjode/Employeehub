@@ -86,10 +86,17 @@
   text-align: center;
 }
 
+.login-btn:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
 .login-btn {
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
+  background-color: #1a365d;
+  color: white;
 }
 
 @keyframes slideUp {

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -18,13 +18,15 @@ describe('LoginComponent', () => {
       imports: [LoginComponent, ReactiveFormsModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
-      ]
+        { provide: Router, useValue: routerSpy },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    mockAuthService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    mockAuthService = TestBed.inject(
+      AuthService
+    ) as jasmine.SpyObj<AuthService>;
     mockRouter = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
@@ -53,27 +55,27 @@ describe('LoginComponent', () => {
 
   it('should call auth service on valid form submission', () => {
     mockAuthService.login.and.returnValue(true);
-    
+
     component.loginForm.patchValue({
       email: 'test@example.com',
-      password: 'password'
+      password: 'password',
     });
 
     component.onSubmit();
 
     expect(mockAuthService.login).toHaveBeenCalledWith({
       email: 'test@example.com',
-      password: 'password'
+      password: 'password',
     });
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
   });
 
   it('should show error message on failed login', () => {
     mockAuthService.login.and.returnValue(false);
-    
+
     component.loginForm.patchValue({
       email: 'test@example.com',
-      password: 'wrongpassword'
+      password: 'wrongpassword',
     });
 
     component.onSubmit();
