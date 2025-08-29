@@ -7,7 +7,6 @@ import { ChatMessage, ChatRoom } from '../models/chat.model';
 })
 export class ChatService {
   private messages: ChatMessage[] = [
-    // initial seed messages (optional)
     {
       id: 1,
       senderId: 1,
@@ -83,20 +82,21 @@ export class ChatService {
     if (!room) return [];
 
     if (room.isGroup) {
-      // ✅ group: show all messages from this room
       return this.messages.filter(
         (m) => m.isGroupMessage && room.participants.includes(m.senderId)
       );
-    } else {
-      // ✅ private: only messages where currentUser is sender or receiver
+    } else if (room.participants.length === 2) {
+      const [user1, user2] = room.participants;
       return this.messages.filter(
         (m) =>
           !m.isGroupMessage &&
-          room.participants.includes(m.senderId) &&
-          (m.receiverId === this.currentUserId ||
-            m.senderId === this.currentUserId)
+          m.receiverId != null &&
+          ((m.senderId === user1 && m.receiverId === user2) ||
+            (m.senderId === user2 && m.receiverId === user1))
       );
     }
+
+    return [];
   }
 
   sendMessage(

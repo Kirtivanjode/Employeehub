@@ -1,5 +1,4 @@
 <div class="chat-container">
-  <!-- Chat Sidebar -->
   <div class="chat-sidebar">
     <div class="sidebar-header">
       <h2>Messages</h2>
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Employee List -->
     <div *ngIf="showEmployeeList" class="employee-list">
       <h3>Employees</h3>
       <div
@@ -28,7 +26,6 @@
       </div>
     </div>
 
-    <!-- Chat Rooms List -->
     <div class="chat-rooms">
       <div
         *ngFor="let room of chatRooms"
@@ -61,21 +58,23 @@
         </span>
       </div>
 
-      <!-- Messages Area -->
       <div class="messages-container">
-        <div *ngFor="let msg of roomMessages">
-          <div
-            [ngClass]="{
-              'my-message': msg.senderId === currentUserId,
-              'their-message': msg.senderId !== currentUserId
-            }"
-          >
-            <span>{{ msg.senderName }}:</span> {{ msg.message }}
+        <div
+          *ngFor="let msg of roomMessages"
+          class="message"
+          [ngClass]="
+            msg.senderId === currentUserId ? 'own-message' : 'their-message'
+          "
+        >
+          <div class="message-content">
+            <span *ngIf="msg.senderId !== currentUserId" class="sender-name">
+              {{ msg.senderName }}:
+            </span>
+            {{ msg.message }}
           </div>
         </div>
       </div>
 
-      <!-- Message Input -->
       <div class="message-input-container">
         <input
           type="text"

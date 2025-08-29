@@ -42,20 +42,29 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     const user = this.authService.getCurrentUser();
     this.currentUserId = user?.employeeId || 1;
 
+    // Tell the service who the current user is (so unread counts are correct)
     this.chatService.setCurrentUserId(this.currentUserId);
 
     this.employeeService.getEmployees().subscribe((employees) => {
       this.employees = employees.filter((e) => e.id !== this.currentUserId);
     });
-
     this.chatService.getChatRooms().subscribe((rooms) => {
+      // only include rooms that have messages for the current user
       this.chatRooms = rooms
-        .filter((room) => room.participants.includes(this.currentUserId))
+        .filter((room) => {
+          const roomMessages = this.chatService.getMessagesForRoom(room.id);
+          return roomMessages.some(
+            (m) =>
+              m.senderId === this.currentUserId ||
+              m.receiverId === this.currentUserId
+          );
+        })
         .map((room) => ({
           ...room,
           unreadCount: room.unreadCount ?? 0,
         }));
 
+      // sync selectedRoom if needed
       if (this.selectedRoom) {
         const synced = this.chatRooms.find(
           (r) => r.id === this.selectedRoom!.id

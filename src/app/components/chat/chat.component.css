@@ -5,7 +5,6 @@
   overflow: hidden;
 }
 
-/* Sidebar */
 .chat-sidebar {
   width: 300px;
   background: white;
@@ -69,7 +68,6 @@
   object-fit: cover;
 }
 
-/* Chat Rooms */
 .chat-rooms {
   flex: 1;
   overflow-y: auto;
@@ -122,12 +120,11 @@
   font-weight: 600;
 }
 
-/* Chat Main */
 .chat-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* fix flex overflow */
+  min-width: 0;
   background: #f9fbfd;
 }
 
@@ -158,7 +155,6 @@
   font-size: clamp(0.8rem, 1.5vw, 1rem);
 }
 
-/* Messages */
 .messages-container {
   flex: 1;
   padding: 1rem;
@@ -214,7 +210,6 @@
   word-wrap: break-word;
 }
 
-/* Custom Messages */
 .my-message {
   text-align: right;
   background: #2b6cb0;
@@ -228,7 +223,6 @@
 
 .their-message {
   text-align: left;
-  background: #edf2f7;
   color: #1a365d;
   padding: 8px 12px;
   border-radius: 12px 12px 12px 0;
@@ -236,7 +230,6 @@
   display: inline-block;
 }
 
-/* Input Area */
 .message-input-container {
   padding: 1rem;
   background: white;
@@ -259,7 +252,6 @@
   border-color: #319795;
 }
 
-/* No Chat Selected */
 .no-chat-selected {
   flex: 1;
   display: flex;
@@ -282,7 +274,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* Buttons */
 .btn {
   padding: 0.6rem 1rem;
   border-radius: 0.5rem;
@@ -307,9 +298,6 @@
   background: #2d3748;
 }
 
-/* ================= RESPONSIVE DESIGN ================= */
-
-/* Tablets (768px - 1024px) */
 @media (max-width: 1024px) {
   .chat-sidebar {
     width: 240px;
@@ -319,7 +307,6 @@
   }
 }
 
-/* Mobiles (<=768px) */
 @media (max-width: 768px) {
   .chat-container {
     flex-direction: column;
@@ -346,7 +333,6 @@
   }
 }
 
-/* Small Mobiles (<=480px) */
 @media (max-width: 480px) {
   .sidebar-header h2 {
     font-size: 1rem;
@@ -388,7 +374,6 @@
   }
 }
 
-/* Extra Small Screens (<=360px) */
 @media (max-width: 360px) {
   .chat-sidebar {
     height: 180px;
@@ -401,7 +386,6 @@
   }
 }
 
-/* Larger Screens (Desktops > 1280px) */
 @media (min-width: 1280px) {
   .chat-container {
     max-width: 1600px;
@@ -418,7 +402,6 @@
   .messages-container {
     padding: 2rem 3rem;
     max-width: 1000px;
-    margin: 0 auto;
   }
 
   .message {
@@ -426,7 +409,6 @@
   }
 }
 
-/* Ultra-Wide Monitors (> 1600px) */
 @media (min-width: 1600px) {
   .chat-container {
     max-width: 1800px;
