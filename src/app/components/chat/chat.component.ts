@@ -42,14 +42,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     const user = this.authService.getCurrentUser();
     this.currentUserId = user?.employeeId || 1;
 
-    // Tell the service who the current user is (so unread counts are correct)
     this.chatService.setCurrentUserId(this.currentUserId);
 
     this.employeeService.getEmployees().subscribe((employees) => {
       this.employees = employees.filter((e) => e.id !== this.currentUserId);
     });
     this.chatService.getChatRooms().subscribe((rooms) => {
-      // only include rooms that have messages for the current user
       this.chatRooms = rooms
         .filter((room) => {
           const roomMessages = this.chatService.getMessagesForRoom(room.id);
@@ -64,7 +62,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           unreadCount: room.unreadCount ?? 0,
         }));
 
-      // sync selectedRoom if needed
       if (this.selectedRoom) {
         const synced = this.chatRooms.find(
           (r) => r.id === this.selectedRoom!.id
@@ -96,6 +93,16 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     this.loadRoomMessages(room);
+  }
+
+  getRoomDisplayName(room: ChatRoom): string {
+    if (room.isGroup) return room.name;
+
+    const otherId = room.participants.find((id) => id !== this.currentUserId);
+    const otherEmployee = this.employeeService.getEmployee(otherId!);
+    return otherEmployee
+      ? `${otherEmployee.firstName} ${otherEmployee.lastName}`
+      : 'Unknown';
   }
 
   sendMessage(): void {

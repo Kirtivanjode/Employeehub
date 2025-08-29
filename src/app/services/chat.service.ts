@@ -148,13 +148,11 @@ export class ChatService {
 
     if (existingRoom) return existingRoom;
 
-    const otherUserName = this.getEmployeeName(userId2);
-
     const newRoom: ChatRoom = {
       id: this.chatRooms.length
         ? Math.max(...this.chatRooms.map((r) => r.id)) + 1
         : 1,
-      name: otherUserName,
+      name: '',
       participants: [userId1, userId2],
       lastMessage: undefined,
       unreadCount: 0,

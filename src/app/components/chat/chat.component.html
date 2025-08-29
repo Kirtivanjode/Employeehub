@@ -34,7 +34,8 @@
         (click)="selectRoom(room)"
       >
         <div class="room-info">
-          <div class="room-name">{{ room.name }}</div>
+          <div class="room-name">{{ getRoomDisplayName(room) }}</div>
+
           <div class="last-message">
             {{ room.lastMessage?.message ?? "" | slice : 0 : 30 }}
             {{ (room.lastMessage?.message ?? "").length > 30 ? "..." : "" }}
@@ -52,7 +53,7 @@
     <div *ngIf="selectedRoom" class="chat-content">
       <!-- Chat Header -->
       <div class="chat-header">
-        <h3>{{ selectedRoom.name }}</h3>
+        <h3>{{ getRoomDisplayName(selectedRoom) }}</h3>
         <span class="participant-count" *ngIf="selectedRoom.isGroup">
           {{ selectedRoom.participants.length }} participants
         </span>
