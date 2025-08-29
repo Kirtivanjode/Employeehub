@@ -394,3 +394,63 @@
     padding: 0.4rem 0.6rem;
   }
 }
+
+/* Larger Screens (Desktops & Wide Monitors > 1280px) */
+@media (min-width: 1280px) {
+  .chat-container {
+    max-width: 1600px;
+    margin: 0 auto; /* center content */
+  }
+
+  .chat-sidebar {
+    width: 350px;
+  }
+
+  .chat-header h3 {
+    font-size: 1.4rem;
+  }
+
+  .participant-count {
+    font-size: 1rem;
+  }
+
+  .message {
+    max-width: 60%; /* keep messages narrower */
+    font-size: 1rem;
+  }
+
+  .message-input {
+    font-size: 1.1rem;
+    padding: 1rem;
+    width: 80%;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+  }
+}
+
+/* Ultra-Wide Screens (> 1600px) */
+@media (min-width: 1600px) {
+  .chat-container {
+    max-width: 1800px;
+  }
+
+  .chat-sidebar {
+    width: 400px;
+  }
+
+  .messages-container {
+    padding: 2rem 4rem; /* more breathing space */
+  }
+
+  .message {
+    max-width: 55%;
+    font-size: 1.05rem;
+  }
+
+  .chat-header h3 {
+    font-size: 1.6rem;
+  }
+}
