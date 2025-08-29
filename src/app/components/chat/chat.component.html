@@ -63,18 +63,15 @@
 
       <!-- Messages Area -->
       <div class="messages-container">
-        <div
-          *ngFor="let message of roomMessages"
-          class="message"
-          [class.own-message]="message.senderId === currentUserId"
-        >
-          <div class="message-header">
-            <span class="sender-name">{{ message.senderName }}</span>
-            <span class="message-time">{{
-              message.timestamp | date : "short"
-            }}</span>
+        <div *ngFor="let msg of roomMessages">
+          <div
+            [ngClass]="{
+              'my-message': msg.senderId === currentUserId,
+              'their-message': msg.senderId !== currentUserId
+            }"
+          >
+            <span>{{ msg.senderName }}:</span> {{ msg.message }}
           </div>
-          <div class="message-content">{{ message.message }}</div>
         </div>
       </div>
 

@@ -42,15 +42,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     const user = this.authService.getCurrentUser();
     this.currentUserId = user?.employeeId || 1;
 
-    // Tell the service who the current user is (so unread counts are correct)
     this.chatService.setCurrentUserId(this.currentUserId);
 
-    // Load all employees except the current user (for "New Chat" list)
     this.employeeService.getEmployees().subscribe((employees) => {
       this.employees = employees.filter((e) => e.id !== this.currentUserId);
     });
 
-    // Subscribe to service rooms (service persists to localStorage)
     this.chatService.getChatRooms().subscribe((rooms) => {
       this.chatRooms = rooms
         .filter((room) => room.participants.includes(this.currentUserId))
@@ -59,7 +56,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           unreadCount: room.unreadCount ?? 0,
         }));
 
-      // If selectedRoom exists, keep it in sync with service object
       if (this.selectedRoom) {
         const synced = this.chatRooms.find(
           (r) => r.id === this.selectedRoom!.id
@@ -70,7 +66,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    // auto-scroll to latest message
     this.scrollToBottom();
   }
 
@@ -85,20 +80,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loadRoomMessages(room);
     this.showEmployeeList = false;
 
-    // mark unread messages as read
     this.roomMessages.forEach((msg) => {
       if (!msg.readBy.includes(this.currentUserId)) {
         this.chatService.markAsRead(msg.id, this.currentUserId);
       }
     });
 
-    // refresh messages
     this.loadRoomMessages(room);
   }
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedRoom) {
-      // ✅ FIX: fetch current user directly from EmployeeService
       const sender = this.employeeService.getEmployee(this.currentUserId);
       const senderName = sender
         ? `${sender.firstName} ${sender.lastName}`
@@ -111,11 +103,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.selectedRoom.id
       );
 
-      // refresh messages and rooms
       this.loadRoomMessages(this.selectedRoom);
       this.newMessage = '';
 
-      // ensure UI updates unread/lastMessage via service subscription
       const latestRoom = this.chatRooms.find(
         (r) => r.id === this.selectedRoom!.id
       );
@@ -124,6 +114,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   startNewChat(employeeId: number): void {
+    if (employeeId === this.currentUserId) {
+      return;
+    }
+
     const room = this.chatService.createPrivateRoom(
       this.currentUserId,
       employeeId
@@ -146,8 +140,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         const el = this.messagesContainer.nativeElement;
         el.scrollTop = el.scrollHeight;
       }
-    } catch (err) {
-      // ignore
-    }
+    } catch (err) {}
   }
 }

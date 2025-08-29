@@ -83,16 +83,18 @@ export class ChatService {
     if (!room) return [];
 
     if (room.isGroup) {
-      return this.messages.filter((m) => m.isGroupMessage);
+      // ✅ group: show all messages from this room
+      return this.messages.filter(
+        (m) => m.isGroupMessage && room.participants.includes(m.senderId)
+      );
     } else {
-      // private: sender & receiver must be part of room participants
+      // ✅ private: only messages where currentUser is sender or receiver
       return this.messages.filter(
         (m) =>
           !m.isGroupMessage &&
           room.participants.includes(m.senderId) &&
-          (typeof m.receiverId === 'number'
-            ? room.participants.includes(m.receiverId)
-            : false)
+          (m.receiverId === this.currentUserId ||
+            m.senderId === this.currentUserId)
       );
     }
   }

@@ -73,6 +73,16 @@ export class AuthService {
     return this.authState.value.user;
   }
 
+  getCurrentEmployeeId(): number | null {
+    // first check sessionStorage
+    const stored = sessionStorage.getItem('currentEmployeeId');
+    if (stored) {
+      return Number(stored);
+    }
+    // fallback to authState
+    return this.getCurrentUser()?.employeeId || null;
+  }
+
   isAuthenticated(): boolean {
     return this.authState.value.isAuthenticated;
   }
@@ -86,23 +96,31 @@ export class AuthService {
     const user = this.users.find((u) => u.email === credentials.email);
     if (!user) return false;
 
-    const authState = {
+    const authState: AuthState = {
       user,
       isAuthenticated: true,
     };
 
     this.authState.next(authState);
     this.saveAuthState(authState);
+
+    // ✅ store employeeId separately for quick access
+    if (user.employeeId) {
+      sessionStorage.setItem('currentEmployeeId', user.employeeId.toString());
+    }
+
     return true;
   }
 
   logout(): void {
-    const authState = {
+    const authState: AuthState = {
       user: null,
       isAuthenticated: false,
     };
     this.authState.next(authState);
+
     sessionStorage.removeItem('authState');
+    sessionStorage.removeItem('currentEmployeeId'); // ✅ clean up
   }
 
   private saveAuthState(state: AuthState): void {

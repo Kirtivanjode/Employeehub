@@ -265,10 +265,31 @@
   background: #2d3748;
 }
 
+.my-message {
+  text-align: right;
+  background: #2b6cb0;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px 12px 0 12px;
+  margin: 6px 0;
+  display: inline-block;
+  position: absolute;
+  right: 0;
+}
+
+.their-message {
+  text-align: left;
+  background: #edf2f7;
+  color: #1a365d;
+  padding: 8px 12px;
+  border-radius: 12px 12px 12px 0;
+  margin: 6px 0;
+  display: inline-block;
+}
+
 @media (max-width: 768px) {
   .chat-container {
     flex-direction: column;
-    height: auto;
     overflow-x: hidden;
   }
 
