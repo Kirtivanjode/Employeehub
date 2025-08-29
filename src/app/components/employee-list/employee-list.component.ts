@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../models/employee.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -19,16 +20,49 @@ export class EmployeeListComponent implements OnInit {
   statusFilter = '';
   departmentFilter = '';
   departments: string[] = [];
+  isAdmin = false;
 
   constructor(
     private employeeService: EmployeeService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin(); // ✅ check role
     this.loadEmployees();
   }
 
+  // ... existing code ...
+
+  editEmployee(event: Event, id: number): void {
+    if (!this.isAdmin) {
+      alert('Only admins can edit employees.');
+      return;
+    }
+    event.stopPropagation();
+    this.router.navigate(['/employee/edit', id]);
+  }
+
+  deleteEmployee(event: Event, id: number): void {
+    if (!this.isAdmin) {
+      alert('Only admins can delete employees.');
+      return;
+    }
+    event.stopPropagation();
+    if (confirm('Are you sure you want to delete this employee?')) {
+      this.employeeService.deleteEmployee(id);
+      this.loadEmployees();
+    }
+  }
+
+  addEmployee(): void {
+    if (this.isAdmin) {
+      this.router.navigate(['/employee/new']);
+    } else {
+      alert('Only admins can add employees.');
+    }
+  }
   loadEmployees(): void {
     this.employeeService.getEmployees().subscribe((employees) => {
       this.employees = employees;
@@ -72,22 +106,5 @@ export class EmployeeListComponent implements OnInit {
 
   viewEmployee(id: number): void {
     this.router.navigate(['/employee', id]);
-  }
-
-  editEmployee(event: Event, id: number): void {
-    event.stopPropagation();
-    this.router.navigate(['/employee/edit', id]);
-  }
-
-  deleteEmployee(event: Event, id: number): void {
-    event.stopPropagation();
-    if (confirm('Are you sure you want to delete this employee?')) {
-      this.employeeService.deleteEmployee(id);
-      this.loadEmployees();
-    }
-  }
-
-  addEmployee(): void {
-    this.router.navigate(['/employee/new']);
   }
 }

@@ -162,11 +162,17 @@
 
 .message.own-message {
   margin-left: auto;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .message.own-message .message-content {
   background: #319795;
   color: white;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 1rem;
 }
 
 .message-header {

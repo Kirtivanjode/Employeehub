@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { AttendanceRecord, AttendanceStats } from '../models/attendance.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AttendanceService {
   private attendanceRecords: AttendanceRecord[] = [
@@ -16,7 +16,7 @@ export class AttendanceService {
       checkInTime: '09:00',
       checkOutTime: '17:30',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 2,
@@ -26,7 +26,7 @@ export class AttendanceService {
       checkInTime: '09:15',
       checkOutTime: '17:45',
       status: 'late',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 3,
@@ -35,14 +35,15 @@ export class AttendanceService {
       date: new Date().toISOString().split('T')[0],
       checkInTime: '08:45',
       status: 'present',
-      workingHours: 0
+      workingHours: 0,
     },
     {
       id: 4,
       employeeId: 4,
       employeeName: 'Sarah Wilson',
       date: new Date().toISOString().split('T')[0],
-      status: 'absent'
+      status: 'absent',
+      workingHours: 0,
     },
     {
       id: 5,
@@ -52,7 +53,7 @@ export class AttendanceService {
       checkInTime: '09:30',
       checkOutTime: '13:30',
       status: 'half-day',
-      workingHours: 4
+      workingHours: 4,
     },
     {
       id: 6,
@@ -62,7 +63,7 @@ export class AttendanceService {
       checkInTime: '08:30',
       checkOutTime: '17:00',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 7,
@@ -72,7 +73,7 @@ export class AttendanceService {
       checkInTime: '09:45',
       checkOutTime: '18:15',
       status: 'late',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 8,
@@ -82,14 +83,15 @@ export class AttendanceService {
       checkInTime: '09:00',
       checkOutTime: '17:30',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 9,
       employeeId: 9,
       employeeName: 'James Taylor',
       date: new Date().toISOString().split('T')[0],
-      status: 'absent'
+      status: 'absent',
+      workingHours: 0,
     },
     {
       id: 10,
@@ -99,7 +101,7 @@ export class AttendanceService {
       checkInTime: '08:45',
       checkOutTime: '17:15',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 11,
@@ -109,7 +111,7 @@ export class AttendanceService {
       checkInTime: '10:00',
       checkOutTime: '14:00',
       status: 'half-day',
-      workingHours: 4
+      workingHours: 4,
     },
     {
       id: 12,
@@ -119,7 +121,7 @@ export class AttendanceService {
       checkInTime: '09:20',
       checkOutTime: '17:50',
       status: 'late',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 13,
@@ -129,14 +131,15 @@ export class AttendanceService {
       checkInTime: '08:55',
       checkOutTime: '17:25',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 14,
       employeeId: 14,
       employeeName: 'Rachel Martinez',
       date: new Date().toISOString().split('T')[0],
-      status: 'absent'
+      status: 'absent',
+      workingHours: 0,
     },
     {
       id: 15,
@@ -146,7 +149,7 @@ export class AttendanceService {
       checkInTime: '09:10',
       checkOutTime: '17:40',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     // Yesterday's attendance for history
     {
@@ -157,7 +160,7 @@ export class AttendanceService {
       checkInTime: '08:55',
       checkOutTime: '17:25',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 17,
@@ -167,7 +170,7 @@ export class AttendanceService {
       checkInTime: '09:00',
       checkOutTime: '17:30',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 18,
@@ -177,7 +180,7 @@ export class AttendanceService {
       checkInTime: '09:30',
       checkOutTime: '17:45',
       status: 'late',
-      workingHours: 8.25
+      workingHours: 8.25,
     },
     {
       id: 19,
@@ -187,18 +190,21 @@ export class AttendanceService {
       checkInTime: '09:05',
       checkOutTime: '17:35',
       status: 'present',
-      workingHours: 8.5
+      workingHours: 8.5,
     },
     {
       id: 20,
       employeeId: 5,
       employeeName: 'David Brown',
       date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-      status: 'absent'
-    }
+      status: 'absent',
+      workingHours: 0,
+    },
   ];
 
-  private attendanceSubject = new BehaviorSubject<AttendanceRecord[]>(this.attendanceRecords);
+  private attendanceSubject = new BehaviorSubject<AttendanceRecord[]>(
+    this.attendanceRecords
+  );
 
   constructor() {
     this.loadAttendance();
@@ -210,19 +216,21 @@ export class AttendanceService {
 
   getTodayAttendance(): AttendanceRecord[] {
     const today = new Date().toISOString().split('T')[0];
-    return this.attendanceRecords.filter(record => record.date === today);
+    return this.attendanceRecords.filter((record) => record.date === today);
   }
 
   getEmployeeAttendance(employeeId: number): AttendanceRecord[] {
-    return this.attendanceRecords.filter(record => record.employeeId === employeeId);
+    return this.attendanceRecords.filter(
+      (record) => record.employeeId === employeeId
+    );
   }
 
   checkIn(employeeId: number, employeeName: string): void {
     const today = new Date().toISOString().split('T')[0];
     const currentTime = new Date().toTimeString().slice(0, 5);
-    
+
     const existingRecord = this.attendanceRecords.find(
-      record => record.employeeId === employeeId && record.date === today
+      (record) => record.employeeId === employeeId && record.date === today
     );
 
     if (existingRecord) {
@@ -230,13 +238,13 @@ export class AttendanceService {
       existingRecord.status = this.getStatusFromTime(currentTime);
     } else {
       const newRecord: AttendanceRecord = {
-        id: Math.max(...this.attendanceRecords.map(r => r.id), 0) + 1,
+        id: Math.max(...this.attendanceRecords.map((r) => r.id), 0) + 1,
         employeeId,
         employeeName,
         date: today,
         checkInTime: currentTime,
         status: this.getStatusFromTime(currentTime),
-        workingHours: 0
+        workingHours: 0,
       };
       this.attendanceRecords.push(newRecord);
     }
@@ -247,14 +255,17 @@ export class AttendanceService {
   checkOut(employeeId: number): void {
     const today = new Date().toISOString().split('T')[0];
     const currentTime = new Date().toTimeString().slice(0, 5);
-    
+
     const record = this.attendanceRecords.find(
-      record => record.employeeId === employeeId && record.date === today
+      (record) => record.employeeId === employeeId && record.date === today
     );
 
     if (record && record.checkInTime) {
       record.checkOutTime = currentTime;
-      record.workingHours = this.calculateWorkingHours(record.checkInTime, currentTime);
+      record.workingHours = this.calculateWorkingHours(
+        record.checkInTime,
+        currentTime
+      );
     }
 
     this.updateAttendance();
@@ -263,13 +274,17 @@ export class AttendanceService {
   getAttendanceStats(): AttendanceStats {
     const todayRecords = this.getTodayAttendance();
     const totalEmployees = 15; // Updated to reflect all employees
-    
+
     return {
       totalEmployees,
-      presentToday: todayRecords.filter(r => r.status === 'present' || r.status === 'late').length,
-      absentToday: todayRecords.filter(r => r.status === 'absent').length,
-      lateToday: todayRecords.filter(r => r.status === 'late').length,
-      averageWorkingHours: todayRecords.reduce((sum, r) => sum + (r.workingHours || 0), 0) / todayRecords.length || 0
+      presentToday: todayRecords.filter(
+        (r) => r.status === 'present' || r.status === 'late'
+      ).length,
+      absentToday: todayRecords.filter((r) => r.status === 'absent').length,
+      lateToday: todayRecords.filter((r) => r.status === 'late').length,
+      averageWorkingHours:
+        todayRecords.reduce((sum, r) => sum + (r.workingHours || 0), 0) /
+          todayRecords.length || 0,
     };
   }
 
@@ -277,17 +292,17 @@ export class AttendanceService {
     const [hours, minutes] = checkInTime.split(':').map(Number);
     const checkInMinutes = hours * 60 + minutes;
     const standardStartTime = 9 * 60; // 9:00 AM in minutes
-    
+
     return checkInMinutes > standardStartTime ? 'late' : 'present';
   }
 
   private calculateWorkingHours(checkIn: string, checkOut: string): number {
     const [inHours, inMinutes] = checkIn.split(':').map(Number);
     const [outHours, outMinutes] = checkOut.split(':').map(Number);
-    
+
     const inTotalMinutes = inHours * 60 + inMinutes;
     const outTotalMinutes = outHours * 60 + outMinutes;
-    
+
     return (outTotalMinutes - inTotalMinutes) / 60;
   }
 

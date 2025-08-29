@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewChecked,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat.service';
@@ -14,14 +21,16 @@ import { Employee } from '../../models/employee.model';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   chatRooms: ChatRoom[] = [];
   selectedRoom: ChatRoom | null = null;
   roomMessages: ChatMessage[] = [];
   employees: Employee[] = [];
   newMessage = '';
   showEmployeeList = false;
-  currentUserId: number = 1; // This should come from auth service
+  currentUserId: number = 1;
+
+  @ViewChild('messagesContainer') private messagesContainer?: ElementRef;
 
   constructor(
     private chatService: ChatService,
@@ -33,57 +42,67 @@ export class ChatComponent implements OnInit, OnDestroy {
     const user = this.authService.getCurrentUser();
     this.currentUserId = user?.employeeId || 1;
 
-    this.loadChatRooms();
-    this.loadEmployees();
-  }
+    // Tell the service who the current user is (so unread counts are correct)
+    this.chatService.setCurrentUserId(this.currentUserId);
 
-  ngOnDestroy(): void {
-    // Clean up subscriptions if needed
-  }
-
-  loadChatRooms(): void {
-    this.chatService.getChatRooms().subscribe((rooms) => {
-      this.chatRooms = rooms;
-    });
-  }
-
-  loadEmployees(): void {
+    // Load all employees except the current user (for "New Chat" list)
     this.employeeService.getEmployees().subscribe((employees) => {
-      this.employees = employees.filter((emp) => emp.id !== this.currentUserId);
+      this.employees = employees.filter((e) => e.id !== this.currentUserId);
     });
-  }
 
-  selectRoom(room: ChatRoom): void {
-    this.selectedRoom = room;
-    this.roomMessages = this.chatService.getMessagesForRoom(room.id);
-    this.showEmployeeList = false;
+    // Subscribe to service rooms (service persists to localStorage)
+    this.chatService.getChatRooms().subscribe((rooms) => {
+      this.chatRooms = rooms
+        .filter((room) => room.participants.includes(this.currentUserId))
+        .map((room) => ({
+          ...room,
+          unreadCount: room.unreadCount ?? 0,
+        }));
 
-    // Mark messages as read
-    this.roomMessages.forEach((message) => {
-      if (!message.readBy.includes(this.currentUserId)) {
-        this.chatService.markAsRead(message.id, this.currentUserId);
+      // If selectedRoom exists, keep it in sync with service object
+      if (this.selectedRoom) {
+        const synced = this.chatRooms.find(
+          (r) => r.id === this.selectedRoom!.id
+        );
+        if (synced) this.selectedRoom = synced;
       }
     });
   }
 
-  startPrivateChat(employeeId: number): void {
-    const room = this.chatService.createPrivateRoom(
-      this.currentUserId,
-      employeeId
-    );
-    this.loadChatRooms();
-    this.selectRoom(room);
+  ngAfterViewChecked(): void {
+    // auto-scroll to latest message
+    this.scrollToBottom();
+  }
+
+  ngOnDestroy(): void {}
+
+  loadRoomMessages(room: ChatRoom): void {
+    this.roomMessages = this.chatService.getMessagesForRoom(room.id);
+  }
+
+  selectRoom(room: ChatRoom): void {
+    this.selectedRoom = room;
+    this.loadRoomMessages(room);
+    this.showEmployeeList = false;
+
+    // mark unread messages as read
+    this.roomMessages.forEach((msg) => {
+      if (!msg.readBy.includes(this.currentUserId)) {
+        this.chatService.markAsRead(msg.id, this.currentUserId);
+      }
+    });
+
+    // refresh messages
+    this.loadRoomMessages(room);
   }
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedRoom) {
-      const user = this.authService.getCurrentUser();
-      const employee = this.employees.find(
-        (emp) => emp.id === this.currentUserId
-      );
-      const senderName = employee
-        ? `${employee.firstName} ${employee.lastName}`
-        : 'Current User';
+      // ✅ FIX: fetch current user directly from EmployeeService
+      const sender = this.employeeService.getEmployee(this.currentUserId);
+      const senderName = sender
+        ? `${sender.firstName} ${sender.lastName}`
+        : 'Unknown User';
 
       this.chatService.sendMessage(
         this.currentUserId,
@@ -92,11 +111,43 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.selectedRoom.id
       );
 
+      // refresh messages and rooms
+      this.loadRoomMessages(this.selectedRoom);
       this.newMessage = '';
-      this.roomMessages = this.chatService.getMessagesForRoom(
-        this.selectedRoom.id
+
+      // ensure UI updates unread/lastMessage via service subscription
+      const latestRoom = this.chatRooms.find(
+        (r) => r.id === this.selectedRoom!.id
       );
-      this.loadChatRooms(); // Refresh to update last message
+      if (latestRoom) this.selectedRoom = latestRoom;
+    }
+  }
+
+  startNewChat(employeeId: number): void {
+    const room = this.chatService.createPrivateRoom(
+      this.currentUserId,
+      employeeId
+    );
+
+    this.selectedRoom = room;
+    this.loadRoomMessages(room);
+    this.showEmployeeList = false;
+
+    this.roomMessages.forEach((msg) => {
+      if (!msg.readBy.includes(this.currentUserId)) {
+        this.chatService.markAsRead(msg.id, this.currentUserId);
+      }
+    });
+  }
+
+  private scrollToBottom(): void {
+    try {
+      if (this.messagesContainer && this.messagesContainer.nativeElement) {
+        const el = this.messagesContainer.nativeElement;
+        el.scrollTop = el.scrollHeight;
+      }
+    } catch (err) {
+      // ignore
     }
   }
 }

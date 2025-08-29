@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee, EmployeeStats } from '../../models/employee.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,12 +22,17 @@ export class DashboardComponent implements OnInit {
   };
   recentEmployees: Employee[] = [];
 
+  isAdmin = false;
+
   constructor(
     private employeeService: EmployeeService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Use the getCurrentUser() method
+    this.isAdmin = this.authService.getCurrentUser()?.role === 'admin';
     this.loadStats();
     this.loadRecentEmployees();
   }
@@ -53,8 +59,11 @@ export class DashboardComponent implements OnInit {
   goToEmployees(): void {
     this.router.navigate(['/employees']);
   }
-
   addEmployee(): void {
-    this.router.navigate(['/employee/new']);
+    if (this.isAdmin) {
+      this.router.navigate(['/employee/new']);
+    } else {
+      alert('Only admins can add new employees.');
+    }
   }
 }

@@ -16,5 +16,5 @@ export interface ChatRoom {
   participants: number[];
   isGroup: boolean;
   lastMessage?: ChatMessage;
-  unreadCount: number;
+  unreadCount?: number;
 }

@@ -38,27 +38,40 @@ export class AttendanceComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
+    console.log('Current user from AuthService:', user);
+
     this.isAdmin = this.authService.isAdmin();
     this.currentEmployeeId = user?.employeeId || null;
+
+    console.log('Is Admin:', this.isAdmin);
+    console.log('Current Employee ID:', this.currentEmployeeId);
 
     this.loadAttendanceData();
     this.checkTodayStatus();
   }
-
   loadAttendanceData(): void {
     this.attendanceService.getAttendanceRecords().subscribe((records) => {
       this.attendanceRecords = records;
+      console.log('All attendance records:', this.attendanceRecords);
 
       if (this.isAdmin) {
         this.displayedRecords = this.attendanceService.getTodayAttendance();
         this.attendanceStats = this.attendanceService.getAttendanceStats();
+        console.log("Today's attendance (Admin view):", this.displayedRecords);
+        console.log('Attendance stats:', this.attendanceStats);
       } else if (this.currentEmployeeId) {
         this.displayedRecords = this.attendanceService
           .getTodayAttendance()
           .filter((record) => record.employeeId === this.currentEmployeeId);
+        console.log(
+          "Today's attendance (Current employee):",
+          this.displayedRecords
+        );
+
         this.employeeHistory = this.attendanceService
           .getEmployeeAttendance(this.currentEmployeeId)
           .slice(-10); // Show last 10 records
+        console.log('Employee history (last 10):', this.employeeHistory);
       }
     });
   }
@@ -75,22 +88,23 @@ export class AttendanceComponent implements OnInit {
   }
 
   checkIn(): void {
-    if (this.currentEmployeeId) {
-      const user = this.authService.getCurrentUser();
-      if (user?.employeeId) {
-        const employeeName = 'Current Employee';
-        this.attendanceService.checkIn(this.currentEmployeeId, employeeName);
-        this.hasCheckedIn = true;
-        this.loadAttendanceData();
-      }
-    }
+    const user = this.authService.getCurrentUser();
+    if (!user || !user.employeeId) return;
+
+    const employeeId = user.employeeId;
+    const employeeName = user.name || 'Unknown Employee';
+
+    this.attendanceService.checkIn(employeeId, employeeName);
+    this.hasCheckedIn = true;
+    this.loadAttendanceData();
   }
 
   checkOut(): void {
     if (this.currentEmployeeId) {
+      console.log('Checking out:', this.currentEmployeeId);
+
       this.attendanceService.checkOut(this.currentEmployeeId);
       this.hasCheckedOut = true;
-
       this.loadAttendanceData();
     }
   }

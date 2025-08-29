@@ -2,11 +2,11 @@ export interface AttendanceRecord {
   id: number;
   employeeId: number;
   employeeName: string;
-  date: string;
-  checkInTime?: string;
-  checkOutTime?: string;
-  status: 'present' | 'absent' | 'late' | 'half-day';
-  workingHours?: number;
+  date: string; // YYYY-MM-DD
+  checkInTime?: string; // HH:mm
+  checkOutTime?: string; // HH:mm
+  status: 'present' | 'late' | 'absent' | 'half-day';
+  workingHours: number;
 }
 
 export interface AttendanceStats {

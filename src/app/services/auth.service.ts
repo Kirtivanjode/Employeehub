@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { User, LoginRequest, AuthState } from '../models/auth.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private users: User[] = [
@@ -11,48 +11,54 @@ export class AuthService {
       id: 1,
       email: 'admin@company.com',
       password: 'admin123',
-      role: 'admin'
+      role: 'admin',
+      name: 'System Admin',
     },
     {
       id: 2,
       email: 'john.doe@company.com',
-      password: 'john123',
+      password: '12345',
       role: 'employee',
-      employeeId: 1
+      employeeId: 1,
+      name: 'John Doe',
     },
     {
       id: 3,
       email: 'jane.smith@company.com',
-      password: 'jane123',
+      password: '12345',
       role: 'employee',
-      employeeId: 2
+      employeeId: 2,
+      name: 'Jane Smith',
     },
     {
       id: 4,
       email: 'michael.johnson@company.com',
-      password: 'michael123',
+      password: '12345',
       role: 'employee',
-      employeeId: 3
+      employeeId: 3,
+      name: 'Michael Johnson',
     },
     {
       id: 5,
       email: 'sarah.wilson@company.com',
-      password: 'sarah123',
+      password: '12345',
       role: 'employee',
-      employeeId: 4
+      employeeId: 4,
+      name: 'Sarah Wilson',
     },
     {
       id: 6,
       email: 'david.brown@company.com',
-      password: 'david123',
+      password: '12345',
       role: 'employee',
-      employeeId: 5
-    }
+      employeeId: 5,
+      name: 'David Brown',
+    },
   ];
 
   private authState = new BehaviorSubject<AuthState>({
     user: null,
-    isAuthenticated: false
+    isAuthenticated: false,
   });
 
   constructor() {
@@ -77,22 +83,14 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): boolean {
-    // Allow any email and password to login
-    // Determine role based on email pattern
-    const isAdmin = credentials.email.toLowerCase().includes('admin');
-    
-    const user: User = {
-      id: Math.floor(Math.random() * 1000) + 100,
-      email: credentials.email,
-      password: credentials.password,
-      role: isAdmin ? 'admin' : 'employee',
-      employeeId: isAdmin ? undefined : Math.floor(Math.random() * 100) + 1
-    };
+    const user = this.users.find((u) => u.email === credentials.email);
+    if (!user) return false;
 
     const authState = {
       user,
-      isAuthenticated: true
+      isAuthenticated: true,
     };
+
     this.authState.next(authState);
     this.saveAuthState(authState);
     return true;
@@ -101,18 +99,18 @@ export class AuthService {
   logout(): void {
     const authState = {
       user: null,
-      isAuthenticated: false
+      isAuthenticated: false,
     };
     this.authState.next(authState);
-    localStorage.removeItem('authState');
+    sessionStorage.removeItem('authState');
   }
 
   private saveAuthState(state: AuthState): void {
-    localStorage.setItem('authState', JSON.stringify(state));
+    sessionStorage.setItem('authState', JSON.stringify(state));
   }
 
   private loadAuthState(): void {
-    const stored = localStorage.getItem('authState');
+    const stored = sessionStorage.getItem('authState');
     if (stored) {
       const authState = JSON.parse(stored);
       this.authState.next(authState);

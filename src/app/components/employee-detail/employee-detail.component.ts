@@ -3,24 +3,29 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee } from '../../models/employee.model';
+import { AuthService } from '../../services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-employee-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.css'],
 })
 export class EmployeeDetailComponent implements OnInit {
   employee: Employee | null = null;
+  isAdmin = false;
 
   constructor(
     private employeeService: EmployeeService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.getCurrentUser()?.role === 'admin';
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.employee =
@@ -29,18 +34,17 @@ export class EmployeeDetailComponent implements OnInit {
   }
 
   editEmployee(): void {
-    if (this.employee) {
+    if (this.employee && this.isAdmin) {
       this.router.navigate(['/employee/edit', this.employee.id]);
     }
   }
 
   deleteEmployee(): void {
-    if (
-      this.employee &&
-      confirm('Are you sure you want to delete this employee?')
-    ) {
-      this.employeeService.deleteEmployee(this.employee.id);
-      this.router.navigate(['/employees']);
+    if (this.employee && this.isAdmin) {
+      if (confirm('Are you sure you want to delete this employee?')) {
+        this.employeeService.deleteEmployee(this.employee.id);
+        this.router.navigate(['/employees']);
+      }
     }
   }
 

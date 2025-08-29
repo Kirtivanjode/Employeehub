@@ -4,6 +4,7 @@ export interface User {
   password: string;
   role: 'admin' | 'employee';
   employeeId?: number;
+  name?: string;
 }
 
 export interface LoginRequest {
